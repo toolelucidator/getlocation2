@@ -28,10 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.ScalingLazyColumn
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.items
+import androidx.wear.compose.material.*
 import com.example.getlocation.R
 import com.example.getlocation.presentation.theme.GetlocationTheme
 import com.google.firebase.database.DataSnapshot
@@ -86,7 +83,6 @@ class CarsViewModel : ViewModel() {
 
     private var _cars = mutableStateOf<List<Car>>(emptyList())
     val cars: State<List<Car>> = _cars
-
     /* ... */
     /* fun getCars() {
         database.getReference("cars")
@@ -116,9 +112,26 @@ class CarsViewModel : ViewModel() {
     }
 }
 
+fun writetoDB(car: Car, index: Int){
+
+
+    val database = Firebase.database("https://fir-iot-488f2-default-rtdb.firebaseio.com")
+    val myRef = database.getReference("cars")
+    listOf(car).forEach() {
+        myRef.child(index.toString()).setValue(it)
+    }
+
+    //myRef.setValue(listOf(car))
+}
+
 @Composable
 fun CarsScreen(viewModel: CarsViewModel ) {
    viewModel.getCars()
+    val index = viewModel.cars.value.size
+
+
+
+
     ScalingLazyColumn {
 
         items(viewModel.cars.value) { car ->
@@ -132,7 +145,11 @@ fun CarsScreen(viewModel: CarsViewModel ) {
                     textAlign = TextAlign.Center, color = White)
 
             }
+
         }
+        item { Button(onClick = { writetoDB(Car("Probando", price = 1000),index) }) {
+            Text(text = "Add to cart")
+        } }
     }
 }
 
